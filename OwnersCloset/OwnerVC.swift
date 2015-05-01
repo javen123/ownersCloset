@@ -12,19 +12,28 @@ import UIKit
 class OwnerVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
    @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var menuBtn: UIBarButtonItem!
     
    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
-        tableView.reloadData()
+        if !myPlaceResArray.isEmpty {
+             tableView.reloadData()
+        }
+        if self.revealViewController() != nil {
+            menuBtn.target = self.revealViewController()
+            menuBtn.action = "revealToggle:"
+            self.view.addGestureRecognizer(self.revealViewController().panGestureRecognizer())
+        }
        
         
     }
     override func viewWillAppear(animated: Bool) {
-        tableView.reloadData()
+        if !myPlaceResArray.isEmpty {
+            tableView.reloadData()
+        }
     }
 
     override func didReceiveMemoryWarning() {

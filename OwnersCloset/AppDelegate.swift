@@ -52,27 +52,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         application.registerUserNotificationSettings(settings)
         application.registerForRemoteNotifications()
         
-        // direct user to correct VC
-        
-        var storyboard = UIStoryboard(name: "Main", bundle: nil)
-        var initialViewController:UIViewController
-        
-        if curUser() != nil {
-            initialViewController = storyboard.instantiateViewControllerWithIdentifier("entryVC") as! UIViewController
-            
-            fetchUserOwnerPlaces()
-        }
-        else {
-            initialViewController = storyboard.instantiateViewControllerWithIdentifier("loginVC") as! UIViewController
-        }
-        
-        // check for 30 day trial period expiration
-        isReadyToPurchase()
-        
-        self.window?.rootViewController = initialViewController
-        self.window?.makeKeyAndVisible()
-        
-        
+        fetchUserOwnerPlaces()
         
         return true
     }

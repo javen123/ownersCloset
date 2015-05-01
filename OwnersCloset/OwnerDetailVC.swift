@@ -17,11 +17,10 @@ class OwnerDetailVC: UIViewController, UITableViewDataSource, UITableViewDelegat
     var controller:UIAlertController?
     private var isSLiderEnabled = false
     
-    @IBOutlet weak var placeNameLabel: UILabel!
+    
     @IBOutlet weak var changePassLabel: UIButton!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var updateBtnLabel: UIButton!
-
     @IBOutlet weak var saveBtnLabel: UIButton!
     
     override func viewWillAppear(animated: Bool) {
@@ -32,9 +31,8 @@ class OwnerDetailVC: UIViewController, UITableViewDataSource, UITableViewDelegat
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tableView.reloadData()
-       self.placeNameLabel.text = self.name
-        
+ 
+            tableView.reloadData()
     }
 
     override func didReceiveMemoryWarning() {
@@ -44,11 +42,7 @@ class OwnerDetailVC: UIViewController, UITableViewDataSource, UITableViewDelegat
    
     //MARK: Buttons
     
-    
-    @IBAction func backBtPressed(sender: UIButton) {
-        self.dismissViewControllerAnimated(true, completion: nil)
-        
-    }
+
     @IBAction func changePasswordBtnPressed(sender: UIButton) {
         
         
@@ -100,7 +94,7 @@ class OwnerDetailVC: UIViewController, UITableViewDataSource, UITableViewDelegat
             self.isSLiderEnabled = true
             self.changePassLabel.hidden = false
             self.updateBtnLabel.hidden = true
-            self.backBtnLabel.hidden = true
+            
             self.saveBtnLabel.hidden = false
             self.tableView.reloadData()
         }
@@ -119,6 +113,8 @@ class OwnerDetailVC: UIViewController, UITableViewDataSource, UITableViewDelegat
                 println(error!.localizedDescription)
             }
             else {
+                let date = NSDate()
+                object!["updated"] = date
                 object!["items"] = self.includedItemsArray
                 object!.saveInBackgroundWithBlock({
                     success, error in
@@ -135,10 +131,10 @@ class OwnerDetailVC: UIViewController, UITableViewDataSource, UITableViewDelegat
                             self.isSLiderEnabled = false
                             self.changePassLabel.hidden = true
                             self.updateBtnLabel.hidden = false
-                            self.backBtnLabel.hidden = false
+                            
                             self.saveBtnLabel.hidden = true
                             self.tableView.reloadData()
-                            self.dismissViewControllerAnimated(true, completion: nil)
+                            self.navigationController?.popToRootViewControllerAnimated(true)
                         })
                         self.controller!.addAction(alertAction)
                         self.presentViewController(self.controller!, animated: true, completion: nil)
@@ -149,8 +145,7 @@ class OwnerDetailVC: UIViewController, UITableViewDataSource, UITableViewDelegat
                             preferredStyle: UIAlertControllerStyle.Alert)
                         
                         let alertAction:UIAlertAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Cancel, handler: { (action) -> Void in
-                            self.dismissViewControllerAnimated(true, completion: nil)
-                        })
+                            self.navigationController?.popToRootViewControllerAnimated(true)                        })
                         alert.addAction(alertAction)
                         
                         self.presentViewController(alert, animated:true, completion: nil)                    }

@@ -20,15 +20,14 @@ class OwnerAddVC: UIViewController {
     
     
     //Outlets
+    @IBOutlet weak var checkNameView: UIView!
+    @IBOutlet weak var addressView: UIView!
     @IBOutlet weak var ownPlaceNameTextField: UITextField!
     @IBOutlet weak var addressTextField: UITextField!
     @IBOutlet weak var zipcodeTextField: UITextField!
-    @IBOutlet weak var checkNameBtn: UIButton!
-    @IBOutlet weak var creatPlaceBtn: UIButton!
-    @IBOutlet weak var createPassLabel: UILabel!
     @IBOutlet weak var enterPassTextField: UITextField!
-    @IBOutlet weak var streetText: UILabel!
-    @IBOutlet weak var bluBottomView: UIVisualEffectView!
+    
+    
     
     
     
@@ -54,9 +53,7 @@ class OwnerAddVC: UIViewController {
         }
         
     }
-    @IBAction func backBtPressed(sender: UIButton) {
-        self.dismissViewControllerAnimated(true, completion: nil)
-    }
+
     
     @IBAction func checkNameButtonPressed(sender: UIButton) {
         
@@ -102,22 +99,10 @@ class OwnerAddVC: UIViewController {
                 self.presentViewController(alert, animated:true, completion: {
                     
                     //update fields and allow new fields
-                    
-                    self.ownPlaceNameTextField.enabled = false
-                    self.ownPlaceNameTextField.alpha = 0.65
-                    self.addressTextField.hidden = false
-                    self.zipcodeTextField.hidden = false
-                    self.creatPlaceBtn.hidden = false
-                    self.checkNameBtn.enabled = false
-                    self.checkNameBtn.alpha = 0.65
                     self.newResName = name
-                    self.enterPassTextField.hidden = false
-                    self.bluBottomView.hidden = false
+                    self.checkNameView.hidden = true
+                    self.addressView.hidden = false
                     
-                    self.createPassLabel.hidden = false
-                    self.streetText.hidden = false
-                    
-               
                 })
             }
         }
@@ -156,8 +141,8 @@ class OwnerAddVC: UIViewController {
             }
             else {
                 
-                var alert:UIAlertController = UIAlertController(title: "Now its time to add the items",
-                    message: "",
+                var alert:UIAlertController = UIAlertController(title: "Almost Done",
+                    message: "Now its time to add the items you want your guests to update",
                     preferredStyle: UIAlertControllerStyle.Alert)
                 
                 let alertAction:UIAlertAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Cancel, handler: { (action) -> Void in

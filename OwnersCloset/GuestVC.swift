@@ -19,7 +19,11 @@ class GuestVC: UIViewController, UITableViewDataSource, UITableViewDelegate, ADB
     
     override func viewDidLoad() {
         super.viewDidLoad()
-         tableView.reloadData()
+        
+        if !myGuestPlacesArray.isEmpty {
+            tableView.reloadData()
+        }
+        
         
         self.loadAds()
         
@@ -28,7 +32,9 @@ class GuestVC: UIViewController, UITableViewDataSource, UITableViewDelegate, ADB
         
     }
     override func viewWillAppear(animated: Bool) {
-        tableView.reloadData()
+        if !myGuestPlacesArray.isEmpty {
+            tableView.reloadData()
+        }
     }
 
     override func didReceiveMemoryWarning() {

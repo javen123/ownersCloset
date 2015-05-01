@@ -13,100 +13,34 @@ class OwnerAddItems:UIViewController, UITableViewDataSource, UITableViewDelegate
     
     @IBOutlet weak var tableView: UITableView!
     
+    let items = OwnerItems()
+    
     var user = PFUser.currentUser()
     var newResPassword:String!
     var newResNameUpload:String!
     var newResLocationUpload:PFGeoPoint!
     
-    private var includedItemsArray = [String : Int]()
-    var tableItems = [
-        
-        ("Mayo", true),
-        ("Mustard - yellow", true),
-        ("Mustard - dijon", true),
-        ("Steak sauce", true),
-        ("Salad dressing - ranch", true),
-        ("Salad dressing - italian",true),
-        ("Salad dressing - vinagrette",true),
-        ("Pickles",true),
-        ("Peanut butter",true),
-        ("Butter",true),
-        ("Soy sauce",true),
-        ("Teriyaki sauce",true),
-        ("Worcestershire sauce",true),
-        ("Soup - cream of mushroom",true),
-        ("Soup - cream of chicken",true),
-        ("Soup - chicken & noodles",true),
-        ("Salsa",true),
-        ("Bbq sauce",true),
-        ("Tobasco",true),
-        ("Chocolate sauce",true),
-        ("Jelly",true),
-        ("Honey",true),
-        ("Pickle relish",true),
-        ("Olive oil",true),
-        ("Canola oil",true),
-        ("Juice - orange",true),
-        ("Juice - apple",true),
-        ("Juice - cranberry",true),
-        ("Popcorn",true),
-        ("Salt",true),
-        ("Pepper",true),
-        ("Garlic powder",true),
-        ("Paprika",true),
-        ("Chili powder",true),
-        ("Coffee",true),
-        ("Coffee filters",true),
-        ("Toilet paper",true),
-        ("Aluminum foil",true),
-        ("Charcoal",true),
-        ("Lighter fluid",true),
-        ("Matches/lighter",true),
-        ("Bottled water",true),
-        ("Paper towels",true),
-        ("Laundry detergent",true),
-        ("Fabric softener",true),
-        ("Dish soap",true),
-        ("Shampoo",true),
-        ("Conditioner",true),
-        ("Toothpaste",true),
-        ("Mouthwash",true),
-        ("Soft drinks",true),
-        ("Gatorade",true),
-        ("Beer",true),
-        ("Wine",true),
-        ("Vodka",true),
-        ("Bourbon",true),
-        ("Scotch",true),
-        ("Tequila",true)
-    ]
-
-    
-    
-    override func viewDidLoad() {
+        override func viewDidLoad() {
         super.viewDidLoad()
     }
     
-    @IBAction func saveResBtnPressed(sender: UIButton) {
-      
+    @IBAction func saveBtnPressed(sender: UIBarButtonItem) {
+        
         // iterate and add items to new array for uploading
         
-        for item in tableItems {
+        for item in items.tableItems {
             if item.1 == true {
-               let x = item
-                self.includedItemsArray[x.0] = 10
+                let x = item
+                items.includedItemsArray[x.0] = 10
             }
         }
         
         
-//      prepare data for parse
-        
-       
-        
+        //      prepare data for parse
         var aNewPlace = PFObject(className: "OwnerPlaces")
         aNewPlace["name"] = self.newResNameUpload
         aNewPlace["location"] = self.newResLocationUpload
-        aNewPlace["items"] = self.includedItemsArray
+        aNewPlace["items"] = items.includedItemsArray
         aNewPlace["password"] = self.newResPassword
         aNewPlace["myOwner"] = user
         
@@ -125,13 +59,11 @@ class OwnerAddItems:UIViewController, UITableViewDataSource, UITableViewDelegate
                     self.user?.saveInBackground()
                     
                     var alert:UIAlertController = UIAlertController(title: "Congratulations your place has been saved",
-                    message: "Have your guest look up \(self.newResNameUpload) to update your items for you",
-                    preferredStyle: UIAlertControllerStyle.Alert)
-                
+                        message: "Have your guest look up \(self.newResNameUpload) to update your items for you",
+                        preferredStyle: UIAlertControllerStyle.Alert)
+                    
                     let alertAction:UIAlertAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
-                        self.presentingViewController?.presentingViewController?.dismissViewControllerAnimated(false, completion: {
-                            println(myPlaceResArray)
-                        })
+                        self.navigationController?.popToRootViewControllerAnimated(true)
                     })
                     alert.addAction(alertAction)
                     
@@ -139,24 +71,22 @@ class OwnerAddItems:UIViewController, UITableViewDataSource, UITableViewDelegate
                     
                     // query and update OwnerVC table
                     
-                   fetchUserOwnerPlaces()
+                    fetchUserOwnerPlaces()
                 }
             }
         }
+
     }
-    
-    @IBAction func backBtnPressed(sender: AnyObject) {
-        self.presentingViewController?.presentingViewController?.dismissViewControllerAnimated(true, completion: nil)
-    }
+
     
     //MARK: TableView datasource
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
         
-        let cell:AddItemsCell = tableView.dequeueReusableCellWithIdentifier("itemCell") as! AddItemsCell
+        let cell:AddItemsCell = tableView.dequeueReusableCellWithIdentifier("cell") as! AddItemsCell
         
-        let itemName = self.tableItems[indexPath.row]
+        let itemName = items.tableItems[indexPath.row]
         
         cell.itemName.text = itemName.0
         cell.imageBool.image = UIImage(named: "checkMark")
@@ -165,7 +95,7 @@ class OwnerAddItems:UIViewController, UITableViewDataSource, UITableViewDelegate
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.tableItems.count
+        return items.tableItems.count
         
     }
     
@@ -181,12 +111,12 @@ class OwnerAddItems:UIViewController, UITableViewDataSource, UITableViewDelegate
             
             if cell.imageBool.image == check {
                 cell.imageBool.image = xMark
-                self.tableItems[curIndexPath.row].1 = false
+                items.tableItems[curIndexPath.row].1 = false
                 
             }
             else {
                 cell.imageBool.image = check
-                self.tableItems[curIndexPath.row].1 = true
+                items.tableItems[curIndexPath.row].1 = true
             
             }
         }
