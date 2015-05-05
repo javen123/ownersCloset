@@ -11,6 +11,7 @@ import UIKit
 class GuestVCCell: UITableViewCell {
 
     @IBOutlet weak var resCellName: UILabel!
+    @IBOutlet weak var dateLabel: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()

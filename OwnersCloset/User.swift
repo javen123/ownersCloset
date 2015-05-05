@@ -46,9 +46,9 @@ func fetchUserOwnerPlaces () {
                 return
             }
             else {
-                myGuestPlacesArray.removeAll(keepCapacity: false)
-                myGuestPlacesArray = objects!
-                println(myGuestPlacesArray)
+                gMyGuestPLacesArray.removeAll(keepCapacity: false)
+                gMyGuestPLacesArray = objects!
+//                println(gMyGuestPLacesArray)
                 
                 var ownRelation = user.relationForKey("myOwnPlaces")
                 ownRelation.query()?.findObjectsInBackgroundWithBlock({
@@ -58,9 +58,9 @@ func fetchUserOwnerPlaces () {
                         return
                     }
                     else {
-                        myPlaceResArray.removeAll(keepCapacity: false)
-                        myPlaceResArray = owners!
-                        println(myPlaceResArray)
+                        gMyPlaceResArray.removeAll(keepCapacity: false)
+                        gMyPlaceResArray = owners!
+                        println(gMyPlaceResArray)
                     }
                 })
             }

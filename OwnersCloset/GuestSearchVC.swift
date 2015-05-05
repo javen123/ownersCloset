@@ -7,17 +7,25 @@
 //
 
 import UIKit
+import MapKit
 
-class GuestSearchVC: UIViewController {
+class GuestSearchVC: UIViewController, CLLocationManagerDelegate {
     
-    var returnedPlace:PFObject!
-
+    let user = PFUser.currentUser()
+    
+    var myPlace:PFObject!
+    
+    @IBOutlet weak var searchView: UIView!
     @IBOutlet weak var resNameTextField: UITextField!
-   
+    @IBOutlet weak var cancelBtn: UIButton!
+    @IBOutlet weak var addBtn: UIButton!
+    
+    @IBOutlet weak var mapView: MKMapView!
+
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        self.addBtn.hidden = true
+        self.cancelBtn.hidden = true
     }
 
     override func didReceiveMemoryWarning() {
@@ -25,18 +33,8 @@ class GuestSearchVC: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if segue.identifier == "toReturnPlaceSegue" {
-            let returnVC:ReturnedPlaceVC = segue.destinationViewController as! ReturnedPlaceVC
-            
-            returnVC.myPlace = self.returnedPlace
-        }
-    }
     
-    @IBAction func backBtnPressed(sender: AnyObject) {
-        self.dismissViewControllerAnimated(true, completion: nil)
-    }
-   
+    //MARK: SeachView
     @IBAction func searchBtnPresed(sender: UIButton) {
         
         var name = self.resNameTextField.text
@@ -60,19 +58,21 @@ class GuestSearchVC: UIViewController {
                 
                 self.presentViewController(alert, animated:true, completion: nil)
             
-
             }
             else {
                 
                 if object != nil {
                     
-                    self.returnedPlace = object!
+                    self.myPlace = object!
                     var alert:UIAlertController = UIAlertController(title: "We've found it",
                         message: "Click OK to verify the location",
                         preferredStyle: UIAlertControllerStyle.Alert)
                     
                     let alertAction:UIAlertAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
-                        self.performSegueWithIdentifier("toReturnPlaceSegue", sender: self)
+                        self.searchView.hidden = true
+                        self.returnedPlace()
+                        self.addBtn.hidden = false
+                        self.cancelBtn.hidden = false
                     })
                     alert.addAction(alertAction)
                     
@@ -96,7 +96,79 @@ class GuestSearchVC: UIViewController {
         }
     }
     
-    @IBAction func backBtPressed(sender: UIButton) {
-        self.dismissViewControllerAnimated(true, completion: nil)
+    @IBAction func cancelBtnPressed(sender: UIButton) {
+        self.searchView.hidden = false
+        self.myPlace = nil
     }
+    @IBAction func addBtnPressed(sender: UIButton) {
+        
+        //fetch current object from Parse
+        
+        let name = myPlace.valueForKey("name") as! String
+        let id = myPlace.objectId!
+        let query = PFQuery(className: "OwnerPlaces")
+        query.getObjectInBackgroundWithId(id, block: {
+            object, error in
+            
+            if error != nil {
+                
+                var alert:UIAlertController = UIAlertController(title: "Error",
+                    message: "\(error!.localizedDescription)",
+                    preferredStyle: UIAlertControllerStyle.Alert)
+                
+                let alertAction:UIAlertAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Cancel, handler: { (action) -> Void in
+                    
+                })
+                alert.addAction(alertAction)
+                
+                self.presentViewController(alert, animated:true, completion: nil)
+            }
+            else {
+                
+                //add place to user guest relation
+                
+                var relation = self.user!.relationForKey("myGuestPlaces")
+                relation.addObject(object!)
+                self.user?.saveInBackground()
+                
+                var alert:UIAlertController = UIAlertController(title: "Congratulations. \(name) has been added to your Places",
+                    message: "",
+                    preferredStyle: UIAlertControllerStyle.Alert)
+                
+                let alertAction:UIAlertAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
+                    self.navigationController?.popToRootViewControllerAnimated(true)
+                })
+                
+                alert.addAction(alertAction)
+                self.presentViewController(alert, animated:true, completion: nil)
+                
+                //Query and update tables
+                fetchUserOwnerPlaces()
+                
+            }
+            
+        })
+    }
+    
+    
+    
+    func returnedPlace() {
+        
+        var latitude = self.myPlace.valueForKey("location")?.latitude
+        var longitude = self.myPlace.valueForKey("location")?.longitude
+        
+        // set map view
+        
+        let location = CLLocationCoordinate2D(latitude: latitude!, longitude: longitude!)
+        let span = MKCoordinateSpanMake(0.25, 0.25)
+        let region = MKCoordinateRegionMake(location, span)
+        self.mapView.setRegion(region, animated: true)
+        
+        // Drop pin
+        
+        let annotation = MKPointAnnotation()
+        annotation.title = myPlace.valueForKey("name") as! String
+        annotation.coordinate = location
+        self.mapView.addAnnotation(annotation)
+     }
 }

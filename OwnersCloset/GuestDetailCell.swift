@@ -14,8 +14,7 @@ class GuestDetailCell: UITableViewCell {
     
     
     @IBOutlet weak var itemNameLabel: UILabel!
-    @IBOutlet weak var slider: UISlider!
-    
+   
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

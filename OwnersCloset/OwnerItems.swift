@@ -10,79 +10,96 @@ import Foundation
 
 class OwnerItems {
     
-    var includedItemsArray = [String : Int]()
     
-    var tableItems = [
-        
-        ("Mayo", true),
-        ("Firewood", true),
-        ("Bath towels", true),
-        ("Fishing - lures", true),
-        ("Fishing - Hooks", true),
-        ("Pool - Chalk", true),
-        ("Foosballs", true),
-        ("Darts", true),
-        ("Mustard - yellow", true),
-        ("Mustard - dijon", true),
-        ("Steak sauce", true),
-        ("Salad dressing - ranch", true),
-        ("Salad dressing - italian",true),
-        ("Salad dressing - vinagrette",true),
-        ("Pickles",true),
-        ("Peanut butter",true),
-        ("Butter",true),
-        ("Soy sauce",true),
-        ("Teriyaki sauce",true),
-        ("Worcestershire sauce",true),
-        ("Soup - cream of mushroom",true),
-        ("Soup - cream of chicken",true),
-        ("Soup - chicken & noodles",true),
-        ("Salsa",true),
-        ("Bbq sauce",true),
-        ("Tobasco",true),
-        ("Chocolate sauce",true),
-        ("Jelly",true),
-        ("Honey",true),
-        ("Pickle relish",true),
-        ("Olive oil",true),
-        ("Canola oil",true),
-        ("Juice - orange",true),
-        ("Juice - apple",true),
-        ("Juice - cranberry",true),
-        ("Popcorn",true),
-        ("Salt",true),
-        ("Pepper",true),
-        ("Garlic powder",true),
-        ("Paprika",true),
-        ("Chili powder",true),
-        ("Coffee",true),
-        ("Coffee filters",true),
-        ("Toilet paper",true),
-        ("Aluminum foil",true),
-        ("Charcoal",true),
-        ("Lighter fluid",true),
-        ("Matches/lighter",true),
-        ("Bottled water",true),
-        ("Paper towels",true),
-        ("Laundry detergent",true),
-        ("Fabric softener",true),
-        ("Dish soap",true),
-        ("Shampoo",true),
-        ("Conditioner",true),
-        ("Toothpaste",true),
-        ("Mouthwash",true),
-        ("Soft drinks",true),
-        ("Gatorade",true),
-        ("Beer",true),
-        ("Wine",true),
-        ("Vodka",true),
-        ("Bourbon",true),
-        ("Scotch",true),
-        ("Tequila",true)
+    var kitchenItems = ["kitchen":
+                        ["Four",
+                        "Sugar",
+                        "Brown Sugar",
+                        "Mayo",
+                        "Mustard - yellow",
+                        "Mustard - dijon",
+                        "Steak sauce",
+                        "Salad dressing - ranch",
+                        "Salad dressing - italian",
+                        "Salad dressing - vinagrette",
+                        "Pickles",
+                        "Peanut butter",
+                        "Butter",
+                        "Soy sauce",
+                        "Teriyaki sauce",
+                        "Worcestershire sauce",
+                        "Soup - cream of mushroom",
+                        "Soup - cream of chicken",
+                        "Soup - chicken & noodles",
+                        "Salsa",
+                        "Bbq sauce",
+                        "Tobasco",
+                        "Chocolate sauce",
+                        "Jelly",
+                        "Honey",
+                        "Pickle relish",
+                        "Olive oil",
+                        "Canola oil",
+                        "Juice - orange",
+                        "Juice - apple",
+                        "Juice - cranberry",
+                        "Popcorn",
+                        "Salt",
+                        "Pepper",
+                        "Paprika",
+                        "Chili powder",
+                        "Coffee",
+                        "Coffee filters",
+                        "Bottled water",
+                        "Garlic powder",
+                        "Dish soap",
+                        "Paper towels"]
     ]
     
     
+    var bathItems = ["bath":[
+                    "Towels",
+                    "Toilet paper",
+                    "Shampoo",
+                    "Conditioner",
+                    "Soap",
+                    "Toothpaste",
+                    "Mouthwash"]
+        
+    ]
+    
+   
+    var outDoorItems = ["outDoor":[
+    
+        "Firewood",
+        "Charcoal",
+        "Lighter Fluid",
+        "Matches/Lighter",
+        "Chairs",
+        "Fishing - lures",
+        "Fishing - bobbers",
+        "Fishing - hooks",
+        "Fishing - line",
+        "Pool floats",
+        "Skeet",]
+    ]
     
     
+    var barItems = ["bar": [
     
+        "Beer",
+        "Scotch",
+        "Wine",
+        "Vodka",
+        "Rum",
+        "Bourbon"]
+    ]
+    
+        var gameItems = ["game":[
+    
+        "Foosballs",
+        "Ping Pong ball",
+        "Pool chalk",
+        "Darts"]
+    ]
 }

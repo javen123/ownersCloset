@@ -10,16 +10,6 @@ import UIKit
 import Parse
 import Bolts
 
-//Globals
-
-var myGuestPlacesArray = [AnyObject]()
-var myPlaceResArray = [AnyObject]()
-var mapCoord:(Double, Double)!
-var sendGuestNotification = false
-var sendOwnerNotification = false
-var purchased = false
-var needToPurchase = false
-
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {

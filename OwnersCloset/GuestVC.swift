@@ -13,6 +13,7 @@ class GuestVC: UIViewController, UITableViewDataSource, UITableViewDelegate, ADB
 
  
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var menuBtn: UIBarButtonItem!
     
     private var bannerView = ADBannerView()
     
@@ -20,19 +21,24 @@ class GuestVC: UIViewController, UITableViewDataSource, UITableViewDelegate, ADB
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if !myGuestPlacesArray.isEmpty {
+        if !gMyGuestPLacesArray.isEmpty {
             tableView.reloadData()
         }
-        
+        if self.revealViewController() != nil {
+            menuBtn.target = self.revealViewController()
+            menuBtn.action = "revealToggle:"
+            self.view.addGestureRecognizer(self.revealViewController().panGestureRecognizer())
+        }
+        self.navigationController?.toolbar.hidden = true
         
         self.loadAds()
         
-        println(myGuestPlacesArray)
+        println(gMyGuestPLacesArray)
         
         
     }
     override func viewWillAppear(animated: Bool) {
-        if !myGuestPlacesArray.isEmpty {
+        if !gMyGuestPLacesArray.isEmpty {
             tableView.reloadData()
         }
     }
@@ -46,36 +52,23 @@ class GuestVC: UIViewController, UITableViewDataSource, UITableViewDelegate, ADB
         
         if segue.identifier == "toGuestDetailSegue" {
             
-            let detailVC:GuestDetialVC = segue.destinationViewController as! GuestDetialVC
+            let detailVC:GuestDetailVC = segue.destinationViewController as! GuestDetailVC
             let indexPath = self.tableView.indexPathForSelectedRow()
-            let guestPlace:AnyObject = myGuestPlacesArray[indexPath!.row]
-            detailVC.name = guestPlace.valueForKey("name") as! String
-            detailVC.itemsDict = guestPlace.valueForKey("items") as! NSDictionary
-            var latitude = guestPlace.valueForKey("location")?.latitude
-            var longitude = guestPlace.valueForKey("location")?.longitude
-            mapCoord = (latitude!, longitude!)
-            }
-        
+            let guestPlace:PFObject = gMyGuestPLacesArray[indexPath!.row] as! PFObject
+            detailVC.curPLace = guestPlace
+        }
     }
-    
-    //Buttons
-    
-    @IBAction func backBtnPressed(sender: AnyObject) {
-        self.dismissViewControllerAnimated(true, completion: nil)
-    }
-    
-    @IBAction func addGestResBtnPressed(sender: UIButton) {
-        self.performSegueWithIdentifier("toGuestSearchSegue", sender: self)
-    }
-
-   
     
     //MARK: TableViewDatasource
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        
         let cell:GuestVCCell = tableView.dequeueReusableCellWithIdentifier("cell") as! GuestVCCell
-        let places:AnyObject = myGuestPlacesArray[indexPath.row]
+        let places:AnyObject = gMyGuestPLacesArray[indexPath.row]
         let name:String = places.valueForKey("name") as! String
+        let update:NSDate = places.valueForKey("updated") as! NSDate
+        
+        cell.dateLabel.text = self.dateConverter(update)
         cell.resCellName.text = name
         return cell
     }
@@ -87,9 +80,9 @@ class GuestVC: UIViewController, UITableViewDataSource, UITableViewDelegate, ADB
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        if myGuestPlacesArray.count > 0 {
+        if gMyGuestPLacesArray.count > 0 {
             
-            let tableRows = myGuestPlacesArray.count
+            let tableRows = gMyGuestPLacesArray.count
             
             return tableRows
         }
@@ -106,10 +99,10 @@ class GuestVC: UIViewController, UITableViewDataSource, UITableViewDelegate, ADB
     
     func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         
-        let objectDelete:PFObject = myGuestPlacesArray[indexPath.row] as! PFObject
+        let objectDelete:PFObject = gMyGuestPLacesArray[indexPath.row] as! PFObject
         
         if editingStyle == UITableViewCellEditingStyle.Delete {
-            myGuestPlacesArray.removeAtIndex(indexPath.row)
+            gMyGuestPLacesArray.removeAtIndex(indexPath.row)
             var query = PFQuery(className: "OwnerPlaces")
             query.getObjectInBackgroundWithId(objectDelete.objectId!) {
                 object, error in
@@ -147,5 +140,13 @@ class GuestVC: UIViewController, UITableViewDataSource, UITableViewDelegate, ADB
     func bannerView(banner: ADBannerView!, didFailToReceiveAdWithError error: NSError!) {
         self.bannerView.hidden = true
     }
+    
+     func dateConverter(date:NSDate) -> String {
+            
+            var dateFormatter = NSDateFormatter()
+            dateFormatter.dateFormat = "MM/dd/yyyy"
+            var dateString = dateFormatter.stringFromDate(date)
+            return dateString
+        }
 
 }

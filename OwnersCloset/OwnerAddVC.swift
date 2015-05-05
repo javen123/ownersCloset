@@ -33,6 +33,8 @@ class OwnerAddVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.navigationController?.toolbar.hidden = true
 
         // Do any additional setup after loading the view.
     }

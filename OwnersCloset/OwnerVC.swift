@@ -11,15 +11,13 @@ import UIKit
 
 class OwnerVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
-   @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var menuBtn: UIBarButtonItem!
-    
-   
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if !myPlaceResArray.isEmpty {
+        if !gMyPlaceResArray.isEmpty {
              tableView.reloadData()
         }
         if self.revealViewController() != nil {
@@ -27,11 +25,13 @@ class OwnerVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
             menuBtn.action = "revealToggle:"
             self.view.addGestureRecognizer(self.revealViewController().panGestureRecognizer())
         }
+        self.navigationController?.toolbar.hidden = true
        
+        
         
     }
     override func viewWillAppear(animated: Bool) {
-        if !myPlaceResArray.isEmpty {
+        if !gMyPlaceResArray.isEmpty {
             tableView.reloadData()
         }
     }
@@ -42,13 +42,14 @@ class OwnerVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if segue.identifier == "toDetailSegue" {
+        
+        if segue.identifier == "ownDetailSegue" {
             
             let detailVC:OwnerDetailVC = segue.destinationViewController as! OwnerDetailVC
             let indexPath = self.tableView.indexPathForSelectedRow()
-            let curPlace:AnyObject = myPlaceResArray[indexPath!.row]
-            detailVC.name = curPlace.valueForKey("name") as! String
-            detailVC.itemsDict = curPlace.valueForKey("items") as! NSDictionary
+            let place:PFObject = gMyPlaceResArray[indexPath!.row] as! PFObject
+            detailVC.curPlace = place
+            
         }
     }
     
@@ -64,9 +65,9 @@ class OwnerVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        if myPlaceResArray.count > 0 {
+        if gMyPlaceResArray.count > 0 {
             
-            let tableRows = myPlaceResArray.count
+            let tableRows = gMyPlaceResArray.count
             return tableRows
         }
         else {
@@ -76,11 +77,12 @@ class OwnerVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell:OwnerVCCell = tableView.dequeueReusableCellWithIdentifier("cell") as! OwnerVCCell
-        let places:AnyObject = myPlaceResArray[indexPath.row]
+        let places:AnyObject = gMyPlaceResArray[indexPath.row]
         let name:String = places.valueForKey("name") as! String
+        let upDate:NSDate = places.valueForKey("updated") as! NSDate
         
         cell.ownResName.text = name
-        
+        cell.updateDate.text = self.dateConverter(upDate)
         return cell
     }
     
@@ -88,16 +90,16 @@ class OwnerVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
-        performSegueWithIdentifier("toDetailSegue", sender: self)
+        performSegueWithIdentifier("ownDetailSegue", sender: self)
         
     }
     
     func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         
-        let objectDelete:PFObject = myPlaceResArray[indexPath.row] as! PFObject
+        let objectDelete:PFObject = gMyPlaceResArray[indexPath.row] as! PFObject
         
         if editingStyle == UITableViewCellEditingStyle.Delete {
-            myPlaceResArray.removeAtIndex(indexPath.row)
+            gMyPlaceResArray.removeAtIndex(indexPath.row)
             var query = PFQuery(className: "OwnerPlaces")
             query.getObjectInBackgroundWithId(objectDelete.objectId!) {
                 object, error in
@@ -109,17 +111,14 @@ class OwnerVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
                     self.tableView.reloadData()
                 }
             }
-            
         }
     }
     
-    // Mark: IAP helper
-    
+    func dateConverter(date:NSDate) -> String {
         
-    
-    
-
-    
-    
-    
+        var dateFormatter = NSDateFormatter()
+        dateFormatter.dateFormat = "MM/dd/yyyy"
+        var dateString = dateFormatter.stringFromDate(date)
+        return dateString
+    }
 }
