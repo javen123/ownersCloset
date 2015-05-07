@@ -96,9 +96,7 @@ class ReturnedPlaceVC: UIViewController, CLLocationManagerDelegate {
                 
                 //Query and update tables
                 fetchUserOwnerPlaces()
-                
             }
-
         })
     }
 }

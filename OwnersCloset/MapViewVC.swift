@@ -8,16 +8,18 @@
 
 import UIKit
 import MapKit
+import iAd
 
-class MapViewVC: UIViewController {
-
-    @IBOutlet weak var resLocationView: MKMapView!
+class MapViewVC: UIViewController, CLLocationManagerDelegate, ADBannerViewDelegate {
     
-    var placeName = GuestDetialVC()
+     private var bannerView = ADBannerView()
+    
+    @IBOutlet weak var resLocationView: MKMapView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.loadAds()
         //Set mapView
         var latitude = mapCoord.0
         var longitude = mapCoord.1
@@ -28,14 +30,9 @@ class MapViewVC: UIViewController {
         
         //set pin
         let annotation = MKPointAnnotation()
-        annotation.title = "\(self.placeName.name)"
         annotation.coordinate = location
         self.resLocationView.addAnnotation(annotation)
         
-        
-        
-        
-
     }
 
     override func didReceiveMemoryWarning() {
@@ -46,4 +43,28 @@ class MapViewVC: UIViewController {
         
         self.dismissViewControllerAnimated(true, completion: nil)
     }
+
+ //MARK: iAd Banner
+
+    func loadAds () {
+        
+        self.bannerView.frame = CGRectMake(0, self.view.frame.size.height - 50, self.view.frame.size.width, 50)
+        self.bannerView.delegate = self
+        self.bannerView.hidden = true
+        view.addSubview(bannerView)
+    }
+
+    func bannerViewDidLoadAd(banner: ADBannerView!) {
+        
+        self.bannerView.hidden = false
+    }
+    
+    func bannerViewActionShouldBegin(banner: ADBannerView!, willLeaveApplication willLeave: Bool) -> Bool {
+        return willLeave
+    }
+    
+    func bannerView(banner: ADBannerView!, didFailToReceiveAdWithError error: NSError!) {
+        self.bannerView.hidden = true
+    }
 }
+   

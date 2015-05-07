@@ -27,16 +27,22 @@ var includedItemsArray = [String : Int]()
 
 var gMyOwnItemsSaved =  [[String : [[String : Int]]]]()
 
-var gKitchenUpdate:[String: [String]]!
-var gBathUpdate:[String: [String]]!
-var gOutDoorUpdate:[String: [String]]!
-var gBarUpdate:[String: [String]]!
-var gGameUpdate:[String: [String]]!
+var gKitchenUpdate:[[String:Int]]!
+var gBathUpdate:[[String:Int]]!
+var gOutDoorUpdate:[[String:Int]]!
+var gBarUpdate:[[String:Int]]!
+var gGameUpdate:[[String:Int]]!
+
+
+//temp items for upload
+
+var kitItems:[String]!
+var batItems:[String]!
+var barItems:[String]!
+var outItems:[String]!
+var gameItems:[String]!
 
 
 
-
-
-    
 
 

@@ -35,7 +35,14 @@ class OwnerAddVC: UIViewController {
         super.viewDidLoad()
         
         self.navigationController?.toolbar.hidden = true
+        let backBtn = UIBarButtonItem(title: "Back", style: UIBarButtonItemStyle.Plain, target: self, action: "backBtnPressed:")
+        backBtn.tintColor = UIColor.blackColor()
+        backBtn.setTitleTextAttributes([NSFontAttributeName: UIFont(name: "Helvetica Neue", size: 15)!], forState: UIControlState.Normal)
+        self.navigationItem.leftBarButtonItem = backBtn
 
+
+
+       
         // Do any additional setup after loading the view.
     }
 
@@ -184,7 +191,9 @@ class OwnerAddVC: UIViewController {
         
     }
     
-        
+    func backBtnPressed(button:UIBarButtonItem) {
+        self.navigationController?.popViewControllerAnimated(true)
+    }
         
     
 }

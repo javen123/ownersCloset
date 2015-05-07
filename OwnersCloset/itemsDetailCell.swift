@@ -10,6 +10,8 @@ import UIKit
 
 class itemsDetailCell: UITableViewCell {
 
+    @IBOutlet weak var itemLabel: UILabel!
+    @IBOutlet weak var slider: UISlider!
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

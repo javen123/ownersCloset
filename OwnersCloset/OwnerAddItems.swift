@@ -26,93 +26,136 @@ class OwnerAddItems: UIViewController, UITableViewDataSource, UITableViewDelegat
     
         override func viewDidLoad() {
         super.viewDidLoad()
+        let backBtn = UIBarButtonItem(title: "Back", style: UIBarButtonItemStyle.Plain, target: self, action: "backBtnPressed:")
+        backBtn.tintColor = UIColor.blackColor()
+        backBtn.setTitleTextAttributes([NSFontAttributeName: UIFont(name: "Helvetica Neue", size: 15)!], forState: UIControlState.Normal)
+        self.navigationItem.leftBarButtonItem = backBtn
+
+
+       
     }
+    
+    // MARK: Save btn
     
     @IBAction func saveBtnPressed(sender: UIBarButtonItem) {
         
-        if gKitchenUpdate != nil {
-            gMyOwnItemsSaved.append(self.saveBtnConverter(gKitchenUpdate))
-        }
-        else {
-            gMyOwnItemsSaved.append(self.saveBtnConverter(self.items.kitchenItems))
-        }
-        if gBathUpdate != nil {
-            gMyOwnItemsSaved.append(self.saveBtnConverter(gBathUpdate))
-        }
-        else {
-            gMyOwnItemsSaved.append(self.saveBtnConverter(self.items.bathItems))
-        }
-        if gBarUpdate != nil {
-            gMyOwnItemsSaved.append(self.saveBtnConverter(gBarUpdate))
-        }
-        else {
-            gMyOwnItemsSaved.append(self.saveBtnConverter(self.items.barItems))
-        }
-        if gOutDoorUpdate != nil {
-            gMyOwnItemsSaved.append(self.saveBtnConverter(gOutDoorUpdate))
-        }
-        else {
-            gMyOwnItemsSaved.append(self.saveBtnConverter(self.items.outDoorItems))
-        }
-        if gGameUpdate != nil {
-            gMyOwnItemsSaved.append(self.saveBtnConverter(gGameUpdate))
-        }
-        else {
-            gMyOwnItemsSaved.append(self.saveBtnConverter(self.items.gameItems))
-        }
-        println(gMyOwnItemsSaved)
+       // set up items array
         
-        //      prepare data for parse
+        if kitItems != nil {
+            gKitchenUpdate = self.updateItemsForUpload(kitItems)
+            
+        }
+        else {
+            gKitchenUpdate = self.updateItemsForUpload(self.items.kitchenItems)
+        }
+        
+        if batItems != nil {
+            gBathUpdate = self.updateItemsForUpload(kitItems)
+            
+        }
+        else {
+            gBathUpdate = self.updateItemsForUpload(self.items.bathItems)
+        }
+        
+        if barItems != nil {
+            gBarUpdate = self.updateItemsForUpload(barItems)
+            
+        }
+        else {
+            gBarUpdate = self.updateItemsForUpload(self.items.barItems)
+        }
+        
+        if gameItems != nil {
+            gGameUpdate = self.updateItemsForUpload(gameItems)
+            
+        }
+        else {
+            gGameUpdate = self.updateItemsForUpload(self.items.gameItems)
+        }
+        
+        if outItems != nil {
+            gOutDoorUpdate = self.updateItemsForUpload(outItems)
+            
+        }
+        else {
+            gOutDoorUpdate = self.updateItemsForUpload(self.items.outDoorItems)
+        }
+
+
+        //   set new items
+        
+        let newItems = PFObject(className: "Items")
+        newItems["kitchen"] = gKitchenUpdate
+        newItems["bath"] = gBathUpdate
+        newItems["bar"] = gBarUpdate
+        newItems["game"] = gGameUpdate
+        newItems["outDoor"] = gOutDoorUpdate
+        
         var aNewPlace = PFObject(className: "OwnerPlaces")
         aNewPlace["name"] = self.newResNameUpload
         aNewPlace["location"] = self.newResLocationUpload
-        aNewPlace["items"] = gMyOwnItemsSaved
         let date = NSDate()
         aNewPlace["updated"] = date
-        if self.newResPassword != nil {
-            aNewPlace["password"] = self.newResPassword
-        }
+        aNewPlace["password"] = self.newResPassword
         
-        aNewPlace["myOwner"] = user
         
-        aNewPlace.saveInBackgroundWithBlock {
+        var array = [PFObject]()
+        array.append(aNewPlace)
+        array.append(newItems)
+        
+        PFObject.saveAllInBackground(array, block: {
+            
             success, error in
             
             if error != nil {
-                println(error?.localizedDescription)
+                
+                println(error!.localizedDescription)
             }
             else {
                 
-                if success == true {
+                // relations
+                
+                let itemsRelation:PFRelation = aNewPlace.relationForKey("myItems")
+                itemsRelation.addObject(newItems)
+                let relation:PFRelation = self.user!.relationForKey("myOwnPlaces")
+                relation.addObject(aNewPlace)
+                
+                var relArray = [PFObject]()
+                relArray.append(self.user!)
+                relArray.append(aNewPlace)
+                
+                PFObject.saveAllInBackground(relArray, block: {
                     
-                    var relation = self.user!.relationForKey("myOwnPlaces")
-                    relation.addObject(aNewPlace)
-                    self.user?.saveInBackground()
+                    success, error in
                     
-                    var alert:UIAlertController = UIAlertController(title: "Congratulations your place has been saved",
+                        fetchUserOwnerPlaces()
+                        if error != nil {
+                            println(error!.localizedDescription)
+                        }
+                        else {
+                            var alert:UIAlertController = UIAlertController(title: "Congratulations your place has been saved",
                         message: "Have your guest look up \(self.newResNameUpload) to update your items for you",
                         preferredStyle: UIAlertControllerStyle.Alert)
                     
                     let alertAction:UIAlertAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
                         self.navigationController?.popToRootViewControllerAnimated(true)
-                        gMyOwnItemsSaved.removeAll(keepCapacity: false)
                         gKitchenUpdate = nil
                         gBathUpdate = nil
                         gBarUpdate = nil
+                        gGameUpdate = nil
                         gOutDoorUpdate = nil
-                        
                     })
                     alert.addAction(alertAction)
                     
                     self.presentViewController(alert, animated:true, completion: nil)
-                    
-                    // query and update OwnerVC table
-                    
-                    fetchUserOwnerPlaces()
-                }
+                    }
+                })
             }
-        }
+        })
     }
+    
+
+    // MARK: Prepare for segue
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         
@@ -124,44 +167,58 @@ class OwnerAddItems: UIViewController, UITableViewDataSource, UITableViewDelegat
             let detailVC:ItemDetail = segue.destinationViewController as! ItemDetail
             
             if indexPath == 0 {
-                if gKitchenUpdate != nil {
-                   detailVC.itemsToDisplay = gKitchenUpdate
+                
+                if kitItems != nil {
+                    detailVC.display = kitItems
                 }
                 else {
-                    detailVC.itemsToDisplay = self.items.kitchenItems
+                    detailVC.display = self.items.kitchenItems
                 }
+               detailVC.cat = 0
             }
-            else if indexPath == 1 {
-                if gBathUpdate != nil{
-                    detailVC.itemsToDisplay = gBathUpdate
+            
+            if indexPath == 1 {
+                
+                if batItems != nil {
+                    detailVC.display = batItems
                 }
                 else {
-                    detailVC.itemsToDisplay = self.items.bathItems
+                    detailVC.display = self.items.bathItems
                 }
+                detailVC.cat = 1
             }
-            else if indexPath == 2 {
-                if gOutDoorUpdate == nil {
-                    detailVC.itemsToDisplay = self.items.outDoorItems
+            
+            if indexPath == 2 {
+                
+                if barItems != nil {
+                    detailVC.display = barItems
                 }
                 else {
-                    detailVC.itemsToDisplay = gOutDoorUpdate
+                    detailVC.display = self.items.barItems
                 }
+                detailVC.cat = 2
             }
-            else if indexPath == 3 {
-                if gBarUpdate == nil {
-                    detailVC.itemsToDisplay = self.items.barItems
+            
+            if indexPath == 3 {
+                
+                if outItems != nil {
+                    detailVC.display = outItems
                 }
                 else {
-                    detailVC.itemsToDisplay = gBarUpdate
+                    detailVC.display = self.items.outDoorItems
                 }
+                detailVC.cat = 3
             }
-            else if indexPath == 4 {
-                if gGameUpdate == nil {
-                    detailVC.itemsToDisplay = self.items.gameItems
+            
+            if indexPath == 4 {
+                
+                if gameItems != nil {
+                    detailVC.display = gameItems
                 }
                 else {
-                    detailVC.itemsToDisplay = gGameUpdate
+                    detailVC.display = self.items.gameItems
                 }
+                detailVC.cat = 4
             }
         }
     }
@@ -214,6 +271,23 @@ class OwnerAddItems: UIViewController, UITableViewDataSource, UITableViewDelegat
         }
         return rDict
     }
+    
+    private func updateItemsForUpload (array :[String]) -> [[String: Int]] {
+        
+        var temp = [[String:Int]]()
+        var aTemp = [String:Int]()
+        
+        for x in array {
+            aTemp = [x:0]
+            temp.append(aTemp)
+        }
+        return temp
+    }
+    
+    func backBtnPressed(button:UIBarButtonItem) {
+        self.navigationController?.popViewControllerAnimated(true)
+    }
+
 }
     
 

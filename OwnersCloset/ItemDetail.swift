@@ -11,22 +11,18 @@ import UIKit
 class ItemDetail: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     
-    var itemsToDisplay = [:]
-    var displayedArray = [String]()
-    
+    var display:[String]!
+    var tempDisplay:[(String,Int)]!
+    var cat:Int!
     
     @IBOutlet weak var tableView: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        println("items to display:\(itemsToDisplay)")
+        tempDisplay = self.displayedItems(self.display)
         self.navigationController?.toolbar.hidden = false
-        for (x, value) in itemsToDisplay {
-            self.displayedArray = value as! [String]
-        }
+        
     }
-
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -34,37 +30,22 @@ class ItemDetail: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     @IBAction func saveBtnPressed(sender: UIBarButtonItem) {
         
-        var filtered = [String]()
+        if self.cat == 0 {
+            kitItems = self.saveBtnHelper()
+        }
+        else if self.cat == 1 {
+            batItems = self.saveBtnHelper()
+        }
+        else if self.cat == 2 {
+            barItems = self.saveBtnHelper()
+        }
+        else if self.cat == 3 {
+            outItems = self.saveBtnHelper()
+        }
+        else if self.cat == 4 {
+           gameItems = self.saveBtnHelper()
+        }
         
-        for x in self.displayedArray {
-            if x != "1" {
-                filtered.append(x)
-                self.displayedArray = filtered
-            }
-        }
-       
-        let items = OwnerItems()
-        
-        if (self.itemsToDisplay.valueForKey("kitchen") != nil) {
-            gKitchenUpdate = ["kitchen":self.displayedArray]
-            
-        }
-        else if (self.itemsToDisplay.valueForKey("bath") != nil) {
-           gBathUpdate = ["bath":self.displayedArray]
-            
-        }
-        else if (self.itemsToDisplay.valueForKey("outDoor") != nil) {
-           gOutDoorUpdate = ["outDoor":self.displayedArray]
-           
-        }
-        else if (self.itemsToDisplay.valueForKey("bar") != nil) {
-            gBarUpdate = ["bar":self.displayedArray]
-            
-        }
-        else if (self.itemsToDisplay.valueForKey("game") != nil) {
-            gGameUpdate = ["game":self.displayedArray]
-            
-        }
         self.navigationController?.popViewControllerAnimated(true)
         
     }
@@ -72,34 +53,73 @@ class ItemDetail: UIViewController, UITableViewDelegate, UITableViewDataSource {
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
      
         let cell:ItemCell = tableView.dequeueReusableCellWithIdentifier("cell") as! ItemCell
-        let path = displayedArray[indexPath.row]
-        cell.itemName.text = path
+        let path = tempDisplay[indexPath.row]
+        cell.itemName.text = path.0
         cell.imageBool.image = UIImage(named: "checkMark")
         return cell
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.displayedArray.count
+        return self.tempDisplay.count
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
         let checkMark = UIImage(named: "checkMark")
         let xMark = UIImage(named: "xMark")
+        var path = self.tempDisplay[indexPath.row]
+        
+        if path.1 == 0 {
+            path.1 = 1
+            self.tempDisplay[indexPath.row] = path
+            println(self.tempDisplay)
+        }
+        else {
+            path.1 = 0
+            self.tempDisplay[indexPath.row] = path
+            println(self.tempDisplay)
+        }
         
         if let curPath = tableView.indexPathForSelectedRow() {
+            
             let cell:ItemCell = tableView.cellForRowAtIndexPath(curPath) as! ItemCell
             if cell.imageBool.image == checkMark {
                 cell.imageBool.image = xMark
-                self.displayedArray[curPath.row] = "1"
+                
                 
             }
             else if cell.imageBool.image == xMark {
                 cell.imageBool.image = checkMark
-                let item = self.displayedArray[curPath.row]
-                self.displayedArray[curPath.row] = cell.itemName.text!
                 
+                println(self.tempDisplay)
             }
         }
+    }
+    
+    // table helper
+    
+    func displayedItems(items:[String]) -> [(String, Int)] {
+        var array = [(String, Int)]()
+        for x in items {
+            let a = x
+            let u = 0
+            let j = (a, u)
+            array.append(j)
+            
+        }
+        return array
+    }
+    
+    func saveBtnHelper() -> [String] {
+        
+        var temp = [String]()
+        
+        for x in self.tempDisplay {
+            if x.1 == 0 {
+                let i = x.0
+                temp.append(i)
+            }
+        }
+        return temp
     }
 }

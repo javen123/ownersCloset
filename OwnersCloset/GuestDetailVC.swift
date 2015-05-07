@@ -14,16 +14,39 @@ class GuestDetailVC: UIViewController, UITableViewDataSource, UITableViewDelegat
     
     private var headers = ["Kitchen", "Bath", "Bar", "Outdoor", "Game"]
     
+    private var barItems:[[String:Int]]!
+    private var kitchenItems:[[String:Int]]!
+    private var bathItems:[[String:Int]]!
+    private var gameItems:[[String:Int]]!
+    private var outDoorItems:[[String:Int]]!
+    private var bannerView = ADBannerView()
+    
     var name:String!
     var curPlace:PFObject!
-    
-    
+    var retrievedItems:[AnyObject]!
+    var controller:UIAlertController?
+    var objId:String!
+
     @IBOutlet weak var tableView: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.navigationController?.toolbar.hidden = true
+        
+        let mapButton = UIBarButtonItem(title: "Map", style: UIBarButtonItemStyle.Plain, target: self, action: "mapView:")
+        mapButton.tintColor = UIColor.blackColor()
+        self.navigationItem.rightBarButtonItem = mapButton
+        
+        let backBtn = UIBarButtonItem(title: "Back", style: UIBarButtonItemStyle.Plain, target: self, action: "backBtnPressed:")
+        backBtn.tintColor = UIColor.blackColor()
+        backBtn.setTitleTextAttributes([NSFontAttributeName: UIFont(name: "Helvetica Neue", size: 15)!], forState: UIControlState.Normal)
+        self.navigationItem.leftBarButtonItem = backBtn
+        
+        
+        self.grabItems()
+
+        self.loadAds()
     }
 
     override func didReceiveMemoryWarning() {
@@ -36,68 +59,127 @@ class GuestDetailVC: UIViewController, UITableViewDataSource, UITableViewDelegat
         var tempArray = [[String:Int]]()
         
         if segue.identifier == "guestItemSegue" {
+            
             let itemDetail:GuestItemDetailVC = segue.destinationViewController as! GuestItemDetailVC
+            
             itemDetail.name = self.curPlace["name"] as! String
             
             let path = self.tableView.indexPathForSelectedRow()?.row
             
             if path == 0 {
-                itemDetail.place = self.segueHelper(0)
+                itemDetail.place = self.kitchenItems
+                itemDetail.obId = self.objId
                 itemDetail.upLoadHead = "kitchen"
             }
             else if path == 1 {
-                itemDetail.place = self.segueHelper(1)
+                itemDetail.place = self.bathItems
+                itemDetail.obId = self.objId
                 itemDetail.upLoadHead = "bath"
             }
             else if path == 2 {
-                itemDetail.place = self.segueHelper(2)
+                itemDetail.place = self.barItems
+                itemDetail.obId = self.objId
                 itemDetail.upLoadHead = "bar"
             }
             else if path == 3 {
-                itemDetail.place = self.segueHelper(3)
+                itemDetail.place = self.outDoorItems
+                itemDetail.obId = self.objId
                 itemDetail.upLoadHead = "outDoor"
             }
             else if path == 4 {
-                itemDetail.place = self.segueHelper(4)
+                itemDetail.place = self.gameItems
+                itemDetail.obId = self.objId
                 itemDetail.upLoadHead = "game"
             }
         }
+    }
+    
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.headers.count
+    }
 
-        func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        
+        let cell:GuestDetailCell = tableView.dequeueReusableCellWithIdentifier("cell") as! GuestDetailCell
+        
+        let path = self.headers[indexPath.row]
+        
+        cell.itemNameLabel.text = path
+        
+        return cell
+    }
+        
+    //MARK: TableView Delegate
+    
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        self.performSegueWithIdentifier("guestItemSegue", sender: self)
+    }
+    
+    // API grab items
+    func grabItems() {
+        
+        let itemRelation = self.curPlace.relationForKey("myItems")
+        itemRelation.query()?.findObjectsInBackgroundWithBlock({
             
-            let cell:GuestDetailCell = tableView.dequeueReusableCellWithIdentifier("cell") as! GuestDetailCell
-            let path = self.headers[indexPath.row]
+            objects, error in
             
-            cell.itemName.text = path
-            
-            return cell
-        }
-        
-        func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-            return self.headers.count
-        }
-        
-        //MARK: TableView Delegate
-        
-        func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-            self.performSegueWithIdentifier("guestItemSegue", sender: self)
-        }
-        
-        // Segue Helper
-        
-        func segueHelper (path:Int) -> [[String:Int]] {
-            var tempArray = [[String:Int]]()
-            
-            let i = self.curPlace["items"] as! [AnyObject]
-            let k: NSMutableDictionary = i[path] as! NSMutableDictionary
-            for (key, value) in k {
-                let j:NSArray = value as! NSArray
-                for l in j {
-                    let d:[String:Int] = l as! [String: Int]
-                    tempArray.append(d)
+            if error != nil {
+                
+                println(error!.localizedDescription)
+            }
+            else {
+                
+                for object in objects! {
+                    self.objId = object.objectId
+                    self.barItems = object["bar"] as! [[String:Int]]
+                    self.kitchenItems = object["kitchen"] as! [[String:Int]]
+                    self.bathItems = object["bath"] as! [[String:Int]]
+                    self.gameItems = object["game"] as! [[String:Int]]
+                    self.outDoorItems = object["outDoor"] as! [[String:Int]]
+                    println(self.objId)
                 }
             }
-            return tempArray
-        }
+        })
     }
+
+    
+    
+    //MARK: iAd Banner
+    
+    func loadAds () {
+        
+        self.bannerView.frame = CGRectMake(0, self.view.frame.size.height - 50, self.view.frame.size.width, 50)
+        self.bannerView.delegate = self
+        self.bannerView.hidden = true
+        view.addSubview(bannerView)
+    }
+    
+    func bannerViewDidLoadAd(banner: ADBannerView!) {
+        
+        self.bannerView.hidden = false
+    }
+    
+    func bannerViewActionShouldBegin(banner: ADBannerView!, willLeaveApplication willLeave: Bool) -> Bool {
+        return willLeave
+    }
+    
+    func bannerView(banner: ADBannerView!, didFailToReceiveAdWithError error: NSError!) {
+        self.bannerView.hidden = true
+    }
+    
+    func dateConverter(date:NSDate) -> String {
+        
+        var dateFormatter = NSDateFormatter()
+        dateFormatter.dateFormat = "MM/dd/yyyy"
+        var dateString = dateFormatter.stringFromDate(date)
+        return dateString
+    }
+    
+    func mapView (button:UIBarButtonItem) {
+        self.performSegueWithIdentifier("mapSegue", sender: self)
+    }
+    func backBtnPressed(button:UIBarButtonItem) {
+        self.navigationController?.popViewControllerAnimated(true)
+    }
+
 }

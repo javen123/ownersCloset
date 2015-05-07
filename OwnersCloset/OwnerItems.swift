@@ -8,11 +8,10 @@
 
 import Foundation
 
-class OwnerItems {
+class OwnerItems  {
     
-    
-    var kitchenItems = ["kitchen":
-                        ["Four",
+    let kitchenItems = [
+                        "Four",
                         "Sugar",
                         "Brown Sugar",
                         "Mayo",
@@ -53,23 +52,24 @@ class OwnerItems {
                         "Bottled water",
                         "Garlic powder",
                         "Dish soap",
-                        "Paper towels"]
+                        "Paper towels"
     ]
     
     
-    var bathItems = ["bath":[
+    let bathItems = [
+                    "bath",
                     "Towels",
                     "Toilet paper",
                     "Shampoo",
                     "Conditioner",
                     "Soap",
                     "Toothpaste",
-                    "Mouthwash"]
+                    "Mouthwash"
         
     ]
     
    
-    var outDoorItems = ["outDoor":[
+    let outDoorItems = [
     
         "Firewood",
         "Charcoal",
@@ -81,25 +81,25 @@ class OwnerItems {
         "Fishing - hooks",
         "Fishing - line",
         "Pool floats",
-        "Skeet",]
+        "Skeet"
     ]
     
     
-    var barItems = ["bar": [
+    var barItems = [
     
         "Beer",
         "Scotch",
         "Wine",
         "Vodka",
         "Rum",
-        "Bourbon"]
+        "Bourbon"
     ]
-    
-        var gameItems = ["game":[
+        
+        var gameItems = [
     
         "Foosballs",
         "Ping Pong ball",
         "Pool chalk",
-        "Darts"]
+        "Darts"
     ]
 }

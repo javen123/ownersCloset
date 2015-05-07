@@ -30,13 +30,11 @@ class GuestVC: UIViewController, UITableViewDataSource, UITableViewDelegate, ADB
             self.view.addGestureRecognizer(self.revealViewController().panGestureRecognizer())
         }
         self.navigationController?.toolbar.hidden = true
-        
+        println(gMyGuestPLacesArray)
         self.loadAds()
         
-        println(gMyGuestPLacesArray)
-        
-        
     }
+    
     override func viewWillAppear(animated: Bool) {
         if !gMyGuestPLacesArray.isEmpty {
             tableView.reloadData()
@@ -50,12 +48,15 @@ class GuestVC: UIViewController, UITableViewDataSource, UITableViewDelegate, ADB
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         
-        if segue.identifier == "toGuestDetailSegue" {
+        if segue.identifier == "guestDetailSegue" {
             
             let detailVC:GuestDetailVC = segue.destinationViewController as! GuestDetailVC
             let indexPath = self.tableView.indexPathForSelectedRow()
             let guestPlace:PFObject = gMyGuestPLacesArray[indexPath!.row] as! PFObject
-            detailVC.curPLace = guestPlace
+            let lat = guestPlace["location"]!.latitude
+            let lon = guestPlace["location"]!.longitude
+            mapCoord = (lat, lon)
+            detailVC.curPlace = guestPlace
         }
     }
     
@@ -93,7 +94,7 @@ class GuestVC: UIViewController, UITableViewDataSource, UITableViewDelegate, ADB
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        performSegueWithIdentifier("toGuestDetailSegue", sender: self)
+        performSegueWithIdentifier("guestDetailSegue", sender: self)
         
     }
     

@@ -10,9 +10,8 @@ import UIKit
 
 class OwnerItemDetailVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
-    var ownerCell:OwnerItemDetailCell!
-    var items:[(String, Int)]!
-    var itemDict:[String:Int]!
+    
+   let cItems = OwnerItems()
     
     //Bar Button Items
     
@@ -21,12 +20,15 @@ class OwnerItemDetailVC: UIViewController, UITableViewDataSource, UITableViewDel
     @IBOutlet weak var addItemBtn: UIBarButtonItem!
 
     // vars
-    var place:[[String:Int]]!
     
+    var items:[(String, Int)]!
+    var place:[[String:Int]]!
     var name:String!
     var upLoadHead:String!
+    var obId:String!
     private var isSLiderEnabled = false
     private var controller:UIAlertController?
+    
     
     @IBOutlet weak var tableView: UITableView!
     
@@ -36,6 +38,12 @@ class OwnerItemDetailVC: UIViewController, UITableViewDataSource, UITableViewDel
         self.items = self.convertAPIItems(place)
         self.navigationItem.leftBarButtonItem?.tintColor = UIColor.blackColor()
         
+        let backBtn = UIBarButtonItem(title: "Back", style: UIBarButtonItemStyle.Plain, target: self, action: "backBtnPressed:")
+        backBtn.tintColor = UIColor.blackColor()
+        backBtn.setTitleTextAttributes([NSFontAttributeName: UIFont(name: "Helvetica Neue", size: 15)!], forState: UIControlState.Normal)
+        self.navigationItem.leftBarButtonItem = backBtn
+
+       
     }
 
     override func didReceiveMemoryWarning() {
@@ -65,6 +73,7 @@ class OwnerItemDetailVC: UIViewController, UITableViewDataSource, UITableViewDel
         }
         return cell
     }
+    
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.items.count
     }
@@ -150,20 +159,26 @@ class OwnerItemDetailVC: UIViewController, UITableViewDataSource, UITableViewDel
                 let newItem = aField[0].text
                 let newItemTup = (newItem!, 0)
                 self.items.append(newItemTup)
-                
-                let query = PFQuery(className: "OwnerPlaces")
-                query.whereKey("name", equalTo: self.name)
-                query.getFirstObjectInBackgroundWithBlock({
-                    object, error in
+                let query = PFQuery(className: "Items")
+                query.getObjectInBackgroundWithId(self.obId) {
                     
+                    object, error in
                     if error != nil {
                         println(error!.localizedDescription)
                     }
                     else {
-                        
-                        self.saveBtnPressed(sender)
+                        object![self.upLoadHead] = self.convertTupToDictArray(self.items)
+                        object!.saveInBackground()
+                        self.controller = UIAlertController(title: "Item have been saved", message: "", preferredStyle: UIAlertControllerStyle.Alert)
+                        let action = UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default) { (alert:UIAlertAction!) -> Void in
+                            fetchUserOwnerPlaces()
+                            self.tableView.reloadData()
+                        }
+                        self.controller?.addAction(action)
+                        self.presentViewController(self.controller!, animated: true, completion: nil)
                     }
-                })
+                }
+                
             }
         }
         controller?.addAction(cancelAction)
@@ -175,86 +190,28 @@ class OwnerItemDetailVC: UIViewController, UITableViewDataSource, UITableViewDel
     
     func saveBtnPressed (button:UIBarButtonItem) {
         
-        if gKitchenUpdate != nil {
-            gMyOwnItemsSaved.append(self.convertTupToDictArray(items))
-        }
-        else {
-            gMyOwnItemsSaved.append(self.convertTupToDictArray(items))
-        }
-        if gBathUpdate != nil {
-            gMyOwnItemsSaved.append(self.convertTupToDictArray(items))
-        }
-        else {
-            gMyOwnItemsSaved.append(self.convertTupToDictArray(items))
-        }
-        if gBarUpdate != nil {
-            gMyOwnItemsSaved.append(self.convertTupToDictArray(items))
-        }
-        else {
-            gMyOwnItemsSaved.append(self.convertTupToDictArray(items))
-        }
-        if gOutDoorUpdate != nil {
-            gMyOwnItemsSaved.append(self.convertTupToDictArray(items))
-        }
-        else {
-            gMyOwnItemsSaved.append(self.convertTupToDictArray(items))
-        }
-        if gGameUpdate != nil {
-            gMyOwnItemsSaved.append(self.convertTupToDictArray(items))
-        }
-        else {
-            gMyOwnItemsSaved.append(self.convertTupToDictArray(items))
-        }
-        
-        let query = PFQuery(className: "OwnerPlaces")
-        query.whereKey("name", equalTo: name)
-        query.getFirstObjectInBackgroundWithBlock {
+        let query = PFQuery(className: "Items")
+        query.getObjectInBackgroundWithId(self.obId) {
             object, error in
+            
             if error != nil {
-                
                 println(error!.localizedDescription)
             }
             else {
-                let date = NSDate()
-                object!["updated"] = date
-                object!["items"] = gMyOwnItemsSaved
-                object!.saveInBackgroundWithBlock({
-                    success, error in
-                    if success == true {
-                        
-                        fetchUserOwnerPlaces()
-                        
-                        
-                        self.controller! = UIAlertController(title: "Thank you",
-                            message: "Items have been updated",
-                            preferredStyle: UIAlertControllerStyle.Alert)
-                        
-                        let alertAction:UIAlertAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
-                            self.isSLiderEnabled = false
-                            self.tableView.reloadData()
-                            self.navigationController?.popToRootViewControllerAnimated(true)
-                        })
-                        self.controller!.addAction(alertAction)
-                        self.presentViewController(self.controller!, animated: true, completion: nil)
-                    }
-                    else {
-                        var alert:UIAlertController = UIAlertController(title: "There was an error saving",
-                            message: "\(error?.localizedDescription)",
-                            preferredStyle: UIAlertControllerStyle.Alert)
-                        
-                        let alertAction:UIAlertAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Cancel, handler: { (action) -> Void in
-                            self.navigationController?.popToRootViewControllerAnimated(true)
-                        })
-                        alert.addAction(alertAction)
-                        
-                        self.presentViewController(alert, animated:true, completion: nil)
-                    }
-                })
-                
+                object![self.upLoadHead] = self.convertTupToDictArray(self.items)
+                object!.saveInBackground()
+                self.controller = UIAlertController(title: "Items have been saved", message: "", preferredStyle: UIAlertControllerStyle.Alert)
+                let action = UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default) { (alert:UIAlertAction!) -> Void in
+                    fetchUserOwnerPlaces()
+                    self.navigationController?.popToRootViewControllerAnimated(true)
+                }
+                self.controller?.addAction(action)
+                self.presentViewController(self.controller!, animated: true, completion: nil)
             }
         }
     }
-    
+
+    //MARK: Helpers
     
     // items converter
     
@@ -287,18 +244,24 @@ class OwnerItemDetailVC: UIViewController, UITableViewDataSource, UITableViewDel
     
     // Save btn helper
     
-    func convertTupToDictArray (tup:[(String, Int)]) -> [String:[[String:Int]]] {
+    func convertTupToDictArray (tup:[(String, Int)]) -> [[String:Int]] {
         
         var tDict = [String:Int]()
         var dictArray = [[String:Int]]()
-        var newDict:[String:[[String:Int]]]!
-        for x in tup {
-            let item = x.0
-            let num = x.1
-            tDict = [item:num]
-            dictArray.append(tDict)
+        
+            for x in tup {
+                let item = x.0
+                let num = x.1
+                tDict = [item:num]
+                dictArray.append(tDict)
         }
-        newDict = [self.name:dictArray]
-        return newDict
+        return dictArray
     }
+    
+    
+    func backBtnPressed(button:UIBarButtonItem) {
+        self.navigationController?.popViewControllerAnimated(true)
+    }
+
+    
 }
