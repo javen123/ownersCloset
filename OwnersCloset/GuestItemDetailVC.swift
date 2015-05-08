@@ -209,10 +209,15 @@ class GuestItemDetailVC: UIViewController, UITableViewDataSource, UITableViewDel
     
     func loadAds () {
         
-        self.bannerView.frame = CGRectMake(0, self.view.frame.size.height - 50, self.view.frame.size.width, 50)
-        self.bannerView.delegate = self
-        self.bannerView.hidden = true
-        view.addSubview(bannerView)
+        if ads == true {
+            self.bannerView.frame = CGRectMake(0, self.view.frame.size.height - 50, self.view.frame.size.width, 50)
+            self.bannerView.delegate = self
+            self.bannerView.hidden = true
+            view.addSubview(bannerView)
+        }
+        else {
+            return
+        }
     }
 
     func bannerViewDidLoadAd(banner: ADBannerView!) {

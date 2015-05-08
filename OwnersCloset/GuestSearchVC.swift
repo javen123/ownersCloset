@@ -26,11 +26,21 @@ class GuestSearchVC: UIViewController, CLLocationManagerDelegate {
         super.viewDidLoad()
         self.addBtn.hidden = true
         self.cancelBtn.hidden = true
+        
+        let backBtn = UIBarButtonItem(title: "Back", style: UIBarButtonItemStyle.Plain, target: self, action: "backBtnPressed:")
+        backBtn.tintColor = UIColor.blackColor()
+        backBtn.setTitleTextAttributes([NSFontAttributeName: UIFont(name: "Helvetica Neue", size: 15)!], forState: UIControlState.Normal)
+        self.navigationItem.leftBarButtonItem = backBtn
+
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    override func touchesEnded(touches: Set<NSObject>, withEvent event: UIEvent) {
+        self.view.endEditing(true)
     }
     
     
@@ -99,6 +109,7 @@ class GuestSearchVC: UIViewController, CLLocationManagerDelegate {
     @IBAction func cancelBtnPressed(sender: UIButton) {
         self.searchView.hidden = false
         self.myPlace = nil
+        self.viewDidLoad()
     }
     @IBAction func addBtnPressed(sender: UIButton) {
         
@@ -150,9 +161,7 @@ class GuestSearchVC: UIViewController, CLLocationManagerDelegate {
         })
     }
     
-    
-    
-    func returnedPlace() {
+   func returnedPlace() {
         
         var latitude = self.myPlace.valueForKey("location")?.latitude
         var longitude = self.myPlace.valueForKey("location")?.longitude
@@ -171,4 +180,8 @@ class GuestSearchVC: UIViewController, CLLocationManagerDelegate {
         annotation.coordinate = location
         self.mapView.addAnnotation(annotation)
      }
+    
+    func backBtnPressed(button:UIBarButtonItem) {
+        self.navigationController?.popViewControllerAnimated(true)
+    }
 }

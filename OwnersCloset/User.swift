@@ -71,24 +71,24 @@ func fetchUserOwnerPlaces () {
 // IAP helper
 
 func isReadyToPurchase() {
+    
     let date = NSDate()
-    let user = PFUser.currentUser()
-    
-    let openDate:NSDate = user!.objectForKey("firstLogDate") as! NSDate
-    
-    
-    let calendar = NSCalendar.currentCalendar()
-    let comps = NSDateComponents()
-    comps.day = 30
-    let date2 = calendar.dateByAddingComponents(comps, toDate: openDate, options: NSCalendarOptions.allZeros)
-    
-    if date.compare(date2!) == NSComparisonResult.OrderedDescending {
-        needToPurchase = true
-        println("\(date2), today's date is: \(date)")
+    if let user = PFUser.currentUser() {
+        if let aDate: AnyObject = user.objectForKey("firstLogDate") {
+        let openDate:NSDate = aDate as! NSDate
+        let calendar = NSCalendar.currentCalendar()
+        let comps = NSDateComponents()
+        comps.day = 21
+        let date2 = calendar.dateByAddingComponents(comps, toDate: openDate, options: NSCalendarOptions.allZeros)
+        
+            if date.compare(date2!) == NSComparisonResult.OrderedDescending {
+                needToPurchase = true
+                println("\(date2), today's date is: \(date)")
+            }
+            else {
+                println("Else: \(date2), today's date is: \(date)")
+                return
+            }
+        }
     }
-    else {
-        println("Else: \(date2), today's date is: \(date)")
-        return
-    }
-    
 }

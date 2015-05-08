@@ -32,26 +32,34 @@ class MapViewVC: UIViewController, CLLocationManagerDelegate, ADBannerViewDelega
         let annotation = MKPointAnnotation()
         annotation.coordinate = location
         self.resLocationView.addAnnotation(annotation)
-        
+       
+        let backBtn = UIBarButtonItem(title: "Back", style: UIBarButtonItemStyle.Plain, target: self, action: "backBtnPressed:")
+        backBtn.tintColor = UIColor.blackColor()
+        backBtn.setTitleTextAttributes([NSFontAttributeName: UIFont(name: "Helvetica Neue", size: 15)!], forState: UIControlState.Normal)
+        self.navigationItem.leftBarButtonItem = backBtn
+
+    
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    @IBAction func backBtnPressed(sender: UIButton) {
-        
-        self.dismissViewControllerAnimated(true, completion: nil)
-    }
+        override func didReceiveMemoryWarning() {
+            super.didReceiveMemoryWarning()
+            // Dispose of any resources that can be recreated.
+        }
+
 
  //MARK: iAd Banner
 
     func loadAds () {
         
-        self.bannerView.frame = CGRectMake(0, self.view.frame.size.height - 50, self.view.frame.size.width, 50)
-        self.bannerView.delegate = self
-        self.bannerView.hidden = true
-        view.addSubview(bannerView)
+        if ads == true {
+            self.bannerView.frame = CGRectMake(0, self.view.frame.size.height - 50, self.view.frame.size.width, 50)
+            self.bannerView.delegate = self
+            self.bannerView.hidden = true
+            view.addSubview(bannerView)
+        }
+        else {
+            return
+        }
     }
 
     func bannerViewDidLoadAd(banner: ADBannerView!) {
@@ -65,6 +73,10 @@ class MapViewVC: UIViewController, CLLocationManagerDelegate, ADBannerViewDelega
     
     func bannerView(banner: ADBannerView!, didFailToReceiveAdWithError error: NSError!) {
         self.bannerView.hidden = true
+    }
+    
+    func backBtnPressed(button:UIBarButtonItem) {
+        self.navigationController?.popViewControllerAnimated(true)
     }
 }
    

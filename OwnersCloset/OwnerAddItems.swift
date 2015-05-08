@@ -15,7 +15,7 @@ class OwnerAddItems: UIViewController, UITableViewDataSource, UITableViewDelegat
     
     @IBOutlet weak var tableView: UITableView!
     
-    let itemHeaderArray = ["Kitchen", "Bathroom", "Outdoors", "Bar", "Gameroom"]
+    let itemHeaderArray = ["Kitchen", "Bathroom", "Bar", "Outdoors",  "Gameroom"]
     
     var user = PFUser.currentUser()
     var newResPassword:String!
@@ -50,7 +50,7 @@ class OwnerAddItems: UIViewController, UITableViewDataSource, UITableViewDelegat
         }
         
         if batItems != nil {
-            gBathUpdate = self.updateItemsForUpload(kitItems)
+            gBathUpdate = self.updateItemsForUpload(batItems)
             
         }
         else {
@@ -133,7 +133,7 @@ class OwnerAddItems: UIViewController, UITableViewDataSource, UITableViewDelegat
                             println(error!.localizedDescription)
                         }
                         else {
-                            var alert:UIAlertController = UIAlertController(title: "Congratulations your place has been saved",
+                            var alert:UIAlertController = UIAlertController(title: "Adjust initial quantities from the Owner's page",
                         message: "Have your guest look up \(self.newResNameUpload) to update your items for you",
                         preferredStyle: UIAlertControllerStyle.Alert)
                     

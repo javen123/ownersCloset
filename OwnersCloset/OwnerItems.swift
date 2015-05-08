@@ -11,7 +11,9 @@ import Foundation
 class OwnerItems  {
     
     let kitchenItems = [
-                        "Four",
+        
+                        "Flour",
+                        "Corn Meal",
                         "Sugar",
                         "Brown Sugar",
                         "Mayo",
@@ -57,7 +59,7 @@ class OwnerItems  {
     
     
     let bathItems = [
-                    "bath",
+        
                     "Towels",
                     "Toilet paper",
                     "Shampoo",

@@ -9,18 +9,42 @@
 import UIKit
 
 class InAppPurchase: UIViewController, SKProductsRequestDelegate, SKPaymentTransactionObserver {
+   
     @IBOutlet weak var topLabel: UILabel!
     @IBOutlet weak var bottomLabel: UILabel!
+    @IBOutlet weak var menuBtn: UIBarButtonItem!
     
-    var product_id: NSString?;
+    
+    var topText:String!
+    
+    var product_id = "owncloset299"
+    var bottomText:String!
     
     override func viewDidLoad() {
-        product_id = "neva3Con";
+        
+        if self.revealViewController() != nil {
+            menuBtn.target = self.revealViewController()
+            menuBtn.action = "revealToggle:"
+            self.view.addGestureRecognizer(self.revealViewController().panGestureRecognizer())
+        }
+
         super.viewDidLoad()
         SKPaymentQueue.defaultQueue().addTransactionObserver(self)
         
         //set up top label
-        var topText = "Thank you for using cabtrack. I hope you and your guests were able to take advantage of its convenience."
+        
+       
+        self.topText = "Thank you for using Owners Closet. I hope you and/or your guests were able to take advantage of its convenience."
+        
+        if needToPurchase == true {
+            
+            self.bottomText = "As an owner your 3 week trial period has ended. This app is free for guests to use but in order to keep your places within the app please click the purchase button below."
+        }
+        
+        else {
+            self.bottomText = "If you would like to discontinue receiving ads and/or would just like to contribute to helping make this app even better then click the purchase button below.  Also, if you have any enhancement ideas please send us an email at ownerscloset@appsneva.com"
+        }
+        
         var paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = NSTextAlignment.Justified
         var attString = NSAttributedString(string: topText, attributes: [NSParagraphStyleAttributeName: paragraphStyle, NSBaselineOffsetAttributeName: NSNumber(float: 0)])
@@ -29,7 +53,7 @@ class InAppPurchase: UIViewController, SKProductsRequestDelegate, SKPaymentTrans
         
         // set up bottom label
         
-        var bottomText = "As an owner your 3 week trial period has ended. This app is free for guests to use but in order to keep your places within the app please click the purchase button below."
+       
         var paragraphStyle1 = NSMutableParagraphStyle()
         paragraphStyle1.alignment = NSTextAlignment.Justified
         var attString1 = NSAttributedString(string: bottomText, attributes: [NSParagraphStyleAttributeName: paragraphStyle1, NSBaselineOffsetAttributeName: NSNumber(float: 0)])
@@ -38,9 +62,7 @@ class InAppPurchase: UIViewController, SKProductsRequestDelegate, SKPaymentTrans
 
         
     }
-    @IBAction func cancelBtnPressed(sender: UIButton) {
-        self.dismissViewControllerAnimated(true, completion: nil)
-    }
+  
     
     @IBAction func purchaseAppBtnPressed(sender: UIButton) {
         
@@ -48,7 +70,7 @@ class InAppPurchase: UIViewController, SKProductsRequestDelegate, SKPaymentTrans
         // We check that we are allow to make the purchase.
         if (SKPaymentQueue.canMakePayments())
         {
-            var productID:NSSet = NSSet(object: self.product_id!);
+            var productID:NSSet = NSSet(object: self.product_id);
             var productsRequest:SKProductsRequest = SKProductsRequest(productIdentifiers: productID as Set<NSObject>);
             productsRequest.delegate = self;
             productsRequest.start();
@@ -105,10 +127,27 @@ class InAppPurchase: UIViewController, SKProductsRequestDelegate, SKPaymentTrans
                 case .Purchased:
                     println("Product Purchased");
                     SKPaymentQueue.defaultQueue().finishTransaction(transaction as! SKPaymentTransaction)
-                    self.dismissViewControllerAnimated(true, completion: nil)
+                    
+                    needToPurchase = false
+                    purchased = 1
+                    let defaults = NSUserDefaults.standardUserDefaults()
+                    defaults.setObject(purchased, forKey: "PURCHASED")
+                    
+                    ads = false
+                    let storyBoard = UIStoryboard(name: "Main", bundle: nil)
+                    let vc = storyBoard.instantiateViewControllerWithIdentifier("entry") as! UIViewController
+                    self.navigationController?.pushViewController(vc, animated: true)
+                    
+                    
                     break;
                 case .Failed:
-                    println("Purchased Failed: \(transaction.error.debugDescription)");
+                    println("Purchased Failed: \(transaction.error.debugDescription)")
+                    
+                    var alert = UIAlertController(title: "Failed", message: transaction.error.debugDescription, preferredStyle: UIAlertControllerStyle.Alert)
+                    var action = UIAlertAction(title: "OK", style: UIAlertActionStyle.Cancel, handler: nil)
+                    alert.addAction(action)
+                    self.presentViewController(alert, animated: true, completion: nil)
+                    
                     SKPaymentQueue.defaultQueue().finishTransaction(transaction as! SKPaymentTransaction)
                     break;
                     // case .Restored:
@@ -118,8 +157,5 @@ class InAppPurchase: UIViewController, SKProductsRequestDelegate, SKPaymentTrans
                 }
             }
         }
-        
     }
-
-
 }

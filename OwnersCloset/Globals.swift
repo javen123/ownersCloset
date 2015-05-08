@@ -8,25 +8,32 @@
 
 import Foundation
 // array for guest places upon request
+
 var gMyGuestPLacesArray = [AnyObject]()
 
 // array for owners upon request
+
 var gMyPlaceResArray = [AnyObject]()
 
 //GeoPoint for Parse/Mapkit
+
 var mapCoord:(Double, Double)!
 
 //push notification
+
 var sendGuestNotification = false
 var sendOwnerNotification = false
 
+// purchase app 
 
-var purchased = false
+
+var purchased = 0
+
 var needToPurchase = false
-var includedItemsArray = [String : Int]()
+
+// owner items
 
 var gMyOwnItemsSaved =  [[String : [[String : Int]]]]()
-
 var gKitchenUpdate:[[String:Int]]!
 var gBathUpdate:[[String:Int]]!
 var gOutDoorUpdate:[[String:Int]]!
@@ -42,7 +49,7 @@ var barItems:[String]!
 var outItems:[String]!
 var gameItems:[String]!
 
-
+var ads = true
 
 
 

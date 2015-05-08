@@ -14,6 +14,7 @@ class EntryVC: UIViewController, PFLogInViewControllerDelegate, PFSignUpViewCont
     
    
     @IBOutlet weak var menuBtn: UIBarButtonItem!
+ 
     
     override func viewDidAppear(animated: Bool) {
         
@@ -36,6 +37,8 @@ class EntryVC: UIViewController, PFLogInViewControllerDelegate, PFSignUpViewCont
    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        isReadyToPurchase()
         
         if self.revealViewController() != nil {
             menuBtn.target = self.revealViewController()

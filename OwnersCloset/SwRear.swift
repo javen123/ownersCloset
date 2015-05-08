@@ -11,15 +11,28 @@ import UIKit
 class SwRear: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     var tableItems = ["Guest", "Owner","About", "Logout", "Buy Now"]
-    
+    var disabledelete = false
     @IBOutlet weak var tableView: UITableView!
+    
+    
+    override func viewWillAppear(animated: Bool) {
+        
+        let defaults = NSUserDefaults.standardUserDefaults()
+        if let x:Int = defaults.valueForKey("PURCHASED") as? Int {
+            if x == 1 && disabledelete == false {
+                self.disabledelete = true
+                self.tableItems.removeLast()
+                tableView.reloadData()
+            }
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.revealViewController().rearViewRevealWidth = 150
         // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
+//         self.clearsSelectionOnViewWillAppear = false
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
@@ -63,8 +76,7 @@ class SwRear: UIViewController, UITableViewDataSource, UITableViewDelegate {
             self.performSegueWithIdentifier("ownerSegue", sender: self)
         }
         else if indexPath.row == 2 {
-            let vc:UIViewController = AboutVC()
-            self.presentViewController(vc, animated: true, completion: nil)
+            self.performSegueWithIdentifier("aboutSegue", sender: self)
         }
         else if indexPath.row == 3 {
             
@@ -77,11 +89,14 @@ class SwRear: UIViewController, UITableViewDataSource, UITableViewDelegate {
                 }
                 else {
                     self.navigationController?.popToRootViewControllerAnimated(true)
+                    let storyBoard = UIStoryboard(name: "Main", bundle: nil)
+                    let vc:UIViewController = storyBoard.instantiateViewControllerWithIdentifier("entry") as! UIViewController
+                    self.navigationController?.pushViewController(vc, animated: true)
                 }
             })
         }
         else if indexPath.row == 4 {
-            self.performSegueWithIdentifier("iapSegue", sender: self)
+            self.performSegueWithIdentifier("iApSegue", sender: self)
         }
     }
 

@@ -29,7 +29,6 @@
 		8F514F971AF299E400F42324 /* EntryVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F514F961AF299E400F42324 /* EntryVC.swift */; };
 		8F514F9E1AF29A3900F42324 /* GuestDetailCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F514F9B1AF29A3900F42324 /* GuestDetailCell.swift */; };
 		8F514F9F1AF29A3900F42324 /* MapViewVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F514F9C1AF29A3900F42324 /* MapViewVC.swift */; };
-		8F514FA21AF29A6700F42324 /* ReturnedPlaceVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F514FA11AF29A6700F42324 /* ReturnedPlaceVC.swift */; };
 		8F514FA51AF29A8700F42324 /* GuestSearchVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F514FA41AF29A8700F42324 /* GuestSearchVC.swift */; };
 		8F514FA81AF29A9C00F42324 /* GuestVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F514FA61AF29A9C00F42324 /* GuestVC.swift */; };
 		8F514FA91AF29A9C00F42324 /* GuestVCCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F514FA71AF29A9C00F42324 /* GuestVCCell.swift */; };
@@ -101,7 +100,6 @@
 		8F514F961AF299E400F42324 /* EntryVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntryVC.swift; sourceTree = "<group>"; };
 		8F514F9B1AF29A3900F42324 /* GuestDetailCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GuestDetailCell.swift; sourceTree = "<group>"; };
 		8F514F9C1AF29A3900F42324 /* MapViewVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewVC.swift; sourceTree = "<group>"; };
-		8F514FA11AF29A6700F42324 /* ReturnedPlaceVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReturnedPlaceVC.swift; sourceTree = "<group>"; };
 		8F514FA41AF29A8700F42324 /* GuestSearchVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GuestSearchVC.swift; sourceTree = "<group>"; };
 		8F514FA61AF29A9C00F42324 /* GuestVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GuestVC.swift; sourceTree = "<group>"; };
 		8F514FA71AF29A9C00F42324 /* GuestVCCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GuestVCCell.swift; sourceTree = "<group>"; };
@@ -303,7 +301,6 @@
 			isa = PBXGroup;
 			children = (
 				8F514FA41AF29A8700F42324 /* GuestSearchVC.swift */,
-				8F514FA11AF29A6700F42324 /* ReturnedPlaceVC.swift */,
 			);
 			name = GuestSearchVC;
 			sourceTree = "<group>";
@@ -492,7 +489,6 @@
 				8F5150281AF3E6E500F42324 /* ItemCell.swift in Sources */,
 				8F514F971AF299E400F42324 /* EntryVC.swift in Sources */,
 				8F514F941AF299B600F42324 /* AppDelegate.swift in Sources */,
-				8F514FA21AF29A6700F42324 /* ReturnedPlaceVC.swift in Sources */,
 				8F51502A1AF3F36B00F42324 /* ItemDetail.swift in Sources */,
 				8F5B66691AF7B64A000BEC18 /* OwnerItemDetailCell.swift in Sources */,
 				8F514FA81AF29A9C00F42324 /* GuestVC.swift in Sources */,
@@ -665,7 +661,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/OwnersCloset",
