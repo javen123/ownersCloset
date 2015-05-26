@@ -95,7 +95,6 @@ class OwnerAddItems: UIViewController, UITableViewDataSource, UITableViewDelegat
         aNewPlace["name"] = self.newResNameUpload
         aNewPlace["location"] = self.newResLocationUpload
         let date = NSDate()
-        aNewPlace["updated"] = date
         aNewPlace["password"] = self.newResPassword
         
         

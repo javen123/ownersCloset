@@ -67,7 +67,7 @@ class GuestVC: UIViewController, UITableViewDataSource, UITableViewDelegate, ADB
         let cell:GuestVCCell = tableView.dequeueReusableCellWithIdentifier("cell") as! GuestVCCell
         let places:AnyObject = gMyGuestPLacesArray[indexPath.row]
         let name:String = places.valueForKey("name") as! String
-        let update:NSDate = places.valueForKey("updated") as! NSDate
+        let update:NSDate = places.valueForKey("updatedAt") as! NSDate
         
         cell.dateLabel.text = self.dateConverter(update)
         cell.resCellName.text = name

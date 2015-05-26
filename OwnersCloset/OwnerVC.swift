@@ -79,7 +79,7 @@ class OwnerVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         let cell:OwnerVCCell = tableView.dequeueReusableCellWithIdentifier("cell") as! OwnerVCCell
         let places:AnyObject = gMyPlaceResArray[indexPath.row]
         let name:String = places.valueForKey("name") as! String
-        let upDate:NSDate = places.valueForKey("updated") as! NSDate
+        let upDate:NSDate = places.valueForKey("updatedAt") as! NSDate
         
         cell.ownResName.text = name
         cell.updateDate.text = self.dateConverter(upDate)

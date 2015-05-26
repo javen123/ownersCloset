@@ -27,7 +27,7 @@ var sendOwnerNotification = false
 // purchase app 
 
 
-var purchased = 0
+var purchased = false
 
 var needToPurchase = false
 

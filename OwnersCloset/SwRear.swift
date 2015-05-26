@@ -17,9 +17,8 @@ class SwRear: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     override func viewWillAppear(animated: Bool) {
         
-        let defaults = NSUserDefaults.standardUserDefaults()
-        if let x:Int = defaults.valueForKey("PURCHASED") as? Int {
-            if x == 1 && disabledelete == false {
+        if purchased == true {
+            if disabledelete == false {
                 self.disabledelete = true
                 self.tableItems.removeLast()
                 tableView.reloadData()
@@ -88,10 +87,11 @@ class SwRear: UIViewController, UITableViewDataSource, UITableViewDelegate {
                     println(error!.localizedDescription)
                 }
                 else {
-                    self.navigationController?.popToRootViewControllerAnimated(true)
+                    purchased = false
+                    self.navigationController?.popToRootViewControllerAnimated(false)
                     let storyBoard = UIStoryboard(name: "Main", bundle: nil)
-                    let vc:UIViewController = storyBoard.instantiateViewControllerWithIdentifier("entry") as! UIViewController
-                    self.navigationController?.pushViewController(vc, animated: true)
+                    let vc:UIViewController = storyBoard.instantiateViewControllerWithIdentifier("NavEntry") as! UIViewController
+                    self.presentViewController(vc, animated: true, completion: nil)
                 }
             })
         }

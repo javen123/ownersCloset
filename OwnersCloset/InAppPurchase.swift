@@ -129,17 +129,18 @@ class InAppPurchase: UIViewController, SKProductsRequestDelegate, SKPaymentTrans
                     SKPaymentQueue.defaultQueue().finishTransaction(transaction as! SKPaymentTransaction)
                     
                     needToPurchase = false
-                    purchased = 1
-                    let defaults = NSUserDefaults.standardUserDefaults()
-                    defaults.setObject(purchased, forKey: "PURCHASED")
-                    
-                    ads = false
+                    let user = PFUser.currentUser()
+                    user!["purchased"] = true as Bool
+                    user!.save()
+                    purchased = true
+                    self.navigationController?.popToRootViewControllerAnimated(false)
                     let storyBoard = UIStoryboard(name: "Main", bundle: nil)
-                    let vc = storyBoard.instantiateViewControllerWithIdentifier("entry") as! UIViewController
-                    self.navigationController?.pushViewController(vc, animated: true)
-                    
+                    let vc:UIViewController = storyBoard.instantiateViewControllerWithIdentifier("NavEntry") as! UIViewController
+                    self.presentViewController(vc, animated: true, completion: nil)
+                    ads = false
                     
                     break;
+                    
                 case .Failed:
                     println("Purchased Failed: \(transaction.error.debugDescription)")
                     

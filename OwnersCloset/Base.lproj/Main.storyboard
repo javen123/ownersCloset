@@ -8,7 +8,7 @@
         <!--Reveal View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="SWRevealViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NavEntry" id="BYZ-38-t0r" customClass="SWRevealViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
@@ -153,7 +153,7 @@
                         <segue destination="kDp-fN-iYd" kind="custom" identifier="ownerSegue" customClass="SWRevealViewControllerSeguePushController" id="53G-XM-0YP"/>
                         <segue destination="DTk-Im-qTz" kind="custom" identifier="guestSegue" customClass="SWRevealViewControllerSeguePushController" id="0Rl-Fd-nk3"/>
                         <segue destination="oLa-Vc-HLx" kind="custom" identifier="iApSegue" customClass="SWRevealViewControllerSeguePushController" id="9dK-6o-SbZ"/>
-                        <segue destination="ZuJ-EO-iNg" kind="modal" identifier="aboutSegue" id="0WQ-mE-477"/>
+                        <segue destination="ZuJ-EO-iNg" kind="presentation" identifier="aboutSegue" id="0WQ-mE-477"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="WuW-LW-kkT" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1192,7 +1192,7 @@
         <!--EntryVC-->
         <scene sceneID="Lj5-oo-QHb">
             <objects>
-                <viewController storyboardIdentifier="entry" id="3FN-ed-P1j" customClass="EntryVC" customModule="OwnersCloset" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="3FN-ed-P1j" customClass="EntryVC" customModule="OwnersCloset" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="cZd-sq-9JV"/>
                         <viewControllerLayoutGuide type="bottom" id="tgU-HN-2mU"/>

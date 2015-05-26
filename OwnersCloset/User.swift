@@ -18,17 +18,6 @@ struct User {
     private let user:PFUser
 }
 
-private func pfUserToUser(user:PFUser!) -> User {
-    
-    return User(id: user.objectId!, firstName: user.objectForKey("firstName") as! String, lastName: user.objectForKey("lastName") as! String, email: user.objectForKey("email") as! String, firstDate: user.objectForKey("firstLogDate") as! NSDate, user: user)
-}
-
-func curUser() -> User? {
-    if let user = PFUser.currentUser() {
-        return pfUserToUser(user)
-    }
-    return nil
-}
 
 
 // Fetch owner and guest places from parse
@@ -38,6 +27,7 @@ func fetchUserOwnerPlaces () {
     if let user = PFUser.currentUser() {
         
         var guestRelation = user.relationForKey("myGuestPlaces")
+        guestRelation.query()?.orderByDescending("updatedAt")
         guestRelation.query()?.findObjectsInBackgroundWithBlock({
         objects, error in
         
@@ -46,11 +36,16 @@ func fetchUserOwnerPlaces () {
                 return
             }
             else {
+                if let bought:AnyObject = user["purchased"] {
+                    purchased = bought as! Bool
+
+                }
                 gMyGuestPLacesArray.removeAll(keepCapacity: false)
                 gMyGuestPLacesArray = objects!
 //                println(gMyGuestPLacesArray)
                 
                 var ownRelation = user.relationForKey("myOwnPlaces")
+                ownRelation.query()?.orderByDescending("updatedAt")
                 ownRelation.query()?.findObjectsInBackgroundWithBlock({
                     owners, error in
                     if error != nil {
@@ -74,7 +69,8 @@ func isReadyToPurchase() {
     
     let date = NSDate()
     if let user = PFUser.currentUser() {
-        if let aDate: AnyObject = user.objectForKey("firstLogDate") {
+        
+        if let aDate: AnyObject = user.createdAt {
         let openDate:NSDate = aDate as! NSDate
         let calendar = NSCalendar.currentCalendar()
         let comps = NSDateComponents()

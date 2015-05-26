@@ -18,9 +18,10 @@ class EntryVC: UIViewController, PFLogInViewControllerDelegate, PFSignUpViewCont
     
     override func viewDidAppear(animated: Bool) {
         
-        if curUser() == nil {
+        //loginVC
+        
+        if PFUser.currentUser() == nil {
             var loginVC = PFLogInViewController()
-            loginVC.delegate = self
             
             loginVC.fields = (PFLogInFields.UsernameAndPassword
                 | PFLogInFields.LogInButton
@@ -30,6 +31,19 @@ class EntryVC: UIViewController, PFLogInViewControllerDelegate, PFSignUpViewCont
                 | PFLogInFields.Facebook)
             
             loginVC.facebookPermissions = ["public_profile", "email"]
+            
+            let logoView = UIImageView(image: UIImage(named:"ocLogo50"))
+            loginVC.logInView?.logo = logoView
+            loginVC.delegate = self
+            
+            //signup controller
+            
+            loginVC.signUpController?.fields = (PFSignUpFields.UsernameAndPassword
+                | PFSignUpFields.Email)
+            loginVC.signUpController?.signUpView?.logo = logoView
+            loginVC.signUpController?.delegate = self
+            
+            
             self.presentViewController(loginVC, animated: true, completion: nil)
         }
 
@@ -37,6 +51,8 @@ class EntryVC: UIViewController, PFLogInViewControllerDelegate, PFSignUpViewCont
    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+      
         
         isReadyToPurchase()
         
@@ -63,14 +79,12 @@ class EntryVC: UIViewController, PFLogInViewControllerDelegate, PFSignUpViewCont
                     println(error.localizedDescription)
                 }
                 else {
-                    let date = NSDate()
-                    
                     // assign fb
                     
-                    user["firstLogDate"] = date
-                    user["firstName"] = result["first_name"]
-                    user["lastName"] = result["last_name"]
-                    user.email = (result["email"] as! String)
+                    user["firstName"] = result!["first_name"]
+                    user["lastName"] = result!["last_name"]
+                    
+                    user.email = (result!["email"] as! String)
                     
                     let pictureURL:String = ((result["picture"] as! NSDictionary) ["data"] as! NSDictionary) ["url"] as! String
                     let url = NSURL(string: pictureURL)
@@ -106,4 +120,13 @@ class EntryVC: UIViewController, PFLogInViewControllerDelegate, PFSignUpViewCont
             self.dismissViewControllerAnimated(true, completion: nil)
         }
     }
+    
+    func signUpViewController(signUpController: PFSignUpViewController, shouldBeginSignUp info: [NSObject : AnyObject]) -> Bool {
+        return true
+    }
+    
+    func signUpViewController(signUpController: PFSignUpViewController, didSignUpUser user: PFUser) {
+        self.dismissViewControllerAnimated(true, completion: nil)
+    }
+
 }
